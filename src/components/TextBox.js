@@ -8,23 +8,39 @@ class TextBox extends Component {
     super(props);
 
     this.state = {
-      localtext: 'Click Here to Change Text'
+      localtext: 'Click Here to Change Text',
+      reduxtext: 'Click Here to Change Text'
     };
 
     this.props.store.subscribe(() => {
       // When state will be updated(in our case, when items will be fetched), we will update local component state and force component to rerender with new data.
       this.setState({
-        localtext: this.props.store.getState().textvalue
+        reduxtext: this.props.store.getState().text
       });
     });
+  }
+
+  valuehandler(currentvalue){
+    if(this.state.localtext!==currentvalue){
+      return this.state.localtext
+    }else{
+      return currentvalue;
+    }
   }
 
   render() {
     return (
       <div>
-        Current text value: {this.state.localtext}
+        Current text value: {this.state.reduxtext}
         <form onClick={()=>{this.setState({localtext: ''})}}>
-          <textarea value={this.state.localtext} onChange={this.props.store.dispatch(textCHANGE(this.state.localtext))}>
+          <textarea value={this.state.localtext} onChange={(e)=>{
+              this.setState({
+                localtext: e.target.value
+              }, ()=>{
+                this.props.store.dispatch(textCHANGE(this.state.localtext))
+              })
+            }
+          }>
           </textarea>
         </form>
       </div>
